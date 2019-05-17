@@ -1,3 +1,4 @@
+
 import React, { Component } from 'react'
 import { getRandomColor, getReducedColor } from './randomColorGenerator.js'
 import Tier2 from './Tier2'
@@ -8,19 +9,57 @@ export default class Tier1 extends Component {
   constructor(props) {
     super(props)
     const initialColor = getRandomColor()
+    const initialChildColor = getReducedColor(initialColor)
+    const initialGrandChildColor = getReducedColor(initialChildColor)
     this.state = {
       color: initialColor,
-      childColor: getReducedColor(initialColor)
-    }
+      childColor: initialChildColor,
+      grandChildColor: initialGrandChildColor,
+    }
+    this.clickOnTier = this.clickOnTier.bind(this)
+  }
+
+  clickOnTier = (event) => {
+    let rando = getRandomColor();
+    let single = getReducedColor(rando);
+    let double = getReducedColor(single);
+
+    if (event.target.className === 'tier3') {
+       this.setState({
+        grandChildColor: rando,
+      })
+    } else if(event.target.className ==='tier2') {
+        this.setState({
+        childColor: rando,
+        grandChildColor: single,
+      })
+    } else {
+        this.setState({
+        color: rando,
+        childColor: single,
+        grandChildColor: double,
+      })
+    };
   }
 
   render() {
-    // hard coded color values have been added below, though they won't be
-    // present in our solution. What should they be replaced with?
     return (
-      <div onClick={() => {this.setState({color: "#000"})}} className="tier1" style={{backgroundColor: this.state.color, color: this.state.color}}>
-        <Tier2 color={"#0F0"} />
-        <Tier2 color={"#0FF"} />
+      <div 
+        onClick={this.clickOnTier} 
+        className="tier1" 
+        style={{backgroundColor: this.state.color, color: this.state.color}}
+      >
+        <Tier2 
+          clickOnTier={this.clickOnTier} 
+          color={this.state.color} 
+          childColor={this.state.childColor}grandChildColor={this.state.grandChildColor}
+        />
+        <Tier2 
+          clickOnTier={this.clickOnTier} 
+          color={this.state.color} 
+          childColor={this.state.childColor} 
+          grandChildColor={this.state.grandChildColor}
+        />
       </div>
     )
   }
